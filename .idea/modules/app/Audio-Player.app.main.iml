@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="AdditionalModuleElements">
+    <content url="file://$MODULE_DIR$/../../../app/build/generated/python/proxies/debug" dumb="true">
+      <excludeFolder url="file://$MODULE_DIR$/../../../app/build/generated/python/proxies/debug/venv" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../../app/build/generated/res/resValues/debug" dumb="true">
+      <excludeFolder url="file://$MODULE_DIR$/../../../app/build/generated/res/resValues/debug/venv" />
+    </content>
+  </component>
+</module>

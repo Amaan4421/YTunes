@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.AudioPlayer" parent="Theme.Material3.DayNight.NoActionBar" />
+
+    <style name="Theme.AudioPlayer" parent="Base.Theme.AudioPlayer">
+
+        <item name="colorPrimary">@color/pink</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="colorPrimaryVariant">@color/red</item>
+        <item name="colorSecondary">#07F3C3</item>
+        <item name="android:buttonStyle">@drawable/button_bg</item>
+
+    </style>
+</resources>

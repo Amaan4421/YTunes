@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/toolbar_bg"
+        android:layout_margin="2dp"
+        app:titleTextColor="#fff">
+
+        <ImageView
+            android:id="@+id/app_logo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/app_logo"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Home"
+            android:textSize="20dp"
+            android:textColor="@color/pink_100"
+            android:layout_marginStart="30dp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/searchText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/toolbar"
+        android:hint="Search..."
+        android:textColorHint="@color/pink_100"
+        android:textColor="#000000"
+        android:inputType="text"
+        android:layout_margin="16dp"
+        android:padding="15dp"
+        android:background="@drawable/search_bg"/>
+
+    <android.widget.Button
+        android:id="@+id/searchButton"
+        android:layout_width="80dp"
+        android:layout_height= "45dp"
+        android:layout_below="@id/searchText"
+        android:text="Search"
+        android:textAlignment="center"
+        android:paddingTop="8dp"
+        android:textColor="@color/white"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="150dp"
+        android:background="@drawable/button_bg"/>
+
+    <ListView
+        android:id="@+id/searchList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/searchButton"
+        android:layout_marginTop="16dp"
+        android:divider="@null"
+        android:dividerHeight="4dp"/>
+
+    <ProgressBar
+        android:id="@+id/showLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@color/white"
+        android:visibility="gone"/>
+
+</RelativeLayout>

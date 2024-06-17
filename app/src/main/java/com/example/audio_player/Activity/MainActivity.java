@@ -18,6 +18,7 @@ import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 import com.example.audio_player.Adapter.ListAdapter;
+import com.example.audio_player.BuildConfig;
 import com.example.audio_player.Model.YoutubeModel;
 import com.example.audio_player.R;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<YoutubeModel> searchResults;
     private YouTube youTube;
     private ProgressBar progressBar;
+
 
     //on create method to show screen UI
     @Override
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity
         progressBar = findViewById(R.id.showLoading);
         Button searchButton = findViewById(R.id.searchButton);
         ListView searchListView = findViewById(R.id.searchList);
+
 
 
         //set values to arraylist and adapter
@@ -91,9 +94,11 @@ public class MainActivity extends AppCompatActivity
             }
         }); //end of listview
 
+        //get the api key from gradle file
+        String api_key = BuildConfig.API_KEY;
 
 
-        //create object of youtube to make http request
+        //create object of youtube to make http request and pass the api key
         youTube = new YouTube.Builder(
                 new com.google.api.client.http.javanet.NetHttpTransport(),
                 new com.google.api.client.json.jackson2.JacksonFactory(),
@@ -102,7 +107,7 @@ public class MainActivity extends AppCompatActivity
                     public void initialize(com.google.api.client.http.HttpRequest request) throws IOException {
                     }
                 }
-        ).setYouTubeRequestInitializer(new YouTubeRequestInitializer(getString(R.string.youtube_api_key)))
+        ).setYouTubeRequestInitializer(new YouTubeRequestInitializer(api_key))
                 .setApplicationName(getString(R.string.app_name)).build();
     }//end of on create method
 

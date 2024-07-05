@@ -3,7 +3,6 @@ package com.example.audio_player.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -142,8 +141,8 @@ public class MainActivity extends AppCompatActivity
             {
                 YouTube.Search.List searchList = youTube.search().list("snippet");
                 searchList.setQ(params[0]);
-                searchList.setType("video");
-                searchList.setMaxResults(10L);
+                searchList.setType("audio");
+                searchList.setMaxResults(100L);
                 SearchListResponse response = searchList.execute();
                 return response.getItems();
             }
@@ -173,7 +172,7 @@ public class MainActivity extends AppCompatActivity
     //to show output related to query in listview
     private void updateSearchResultsList(List<SearchResult> results)
     {
-        searchResults.clear();
+//        searchResults.clear();
         for (SearchResult result : results)
         {
             String videoTitle = result.getSnippet().getTitle();
@@ -220,6 +219,7 @@ public class MainActivity extends AppCompatActivity
         }//end of method async
 
 
+
         //this method will download the audio file by using python script
         //file will be stored in cache memory
         @Override
@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity
             PyObject result = pyObject.callAttr("extract_audio", videoUrl);
             return result.toString();
         }//end of method async
+
 
 
         //after downloading file, main page navigate to play audio page where user can listen audio

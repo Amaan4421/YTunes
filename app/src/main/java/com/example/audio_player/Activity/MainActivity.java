@@ -25,6 +25,8 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,13 +87,20 @@ public class MainActivity extends AppCompatActivity
 
 
         //when user clicks any item in list, get the video url of that item from model
+        //also pass the image and title to next page
         searchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                getAudioFileUrl(searchResults.get(position).getVideoUrl());
+                YoutubeModel item = searchResults.get(position);
+                Intent i = new Intent(MainActivity.this, PlayAudio.class);
+                i.putExtra("title", item.getVideoTitle());
+                i.putExtra("image", item.getVideoImageUrl());
+                getAudioFileUrl(item.getVideoUrl(), i);
             }
         }); //end of listview
+
+
 
         //get the api key from gradle file
         String api_key = BuildConfig.API_KEY;
@@ -131,18 +140,30 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    //search query in youtube database
+    //search query in youtube database and give the search result
     private class YouTubeSearchTask extends AsyncTask<String, Void, List<SearchResult>>
     {
+
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+
+            //change the visibility of loading bar
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
         @Override
         protected List<SearchResult> doInBackground(String... params)
         {
             try
             {
+                //search in youtube and get snippet data from video metadata
                 YouTube.Search.List searchList = youTube.search().list("snippet");
                 searchList.setQ(params[0]);
                 searchList.setType("audio");
                 searchList.setMaxResults(100L);
+
+                //add response in one list
                 SearchListResponse response = searchList.execute();
                 return response.getItems();
             }
@@ -154,10 +175,27 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(List<SearchResult> searchResults) {
+        protected void onPostExecute(List<SearchResult> searchResults)
+        {
             if (searchResults != null)
             {
-                updateSearchResultsList(searchResults);
+                progressBar.setVisibility(View.GONE);
+
+                //fetch all videos id from youtube database and store it in one list to fetch their details
+                //such details are title, duration, image, etc...
+                List<String> resultVideoIds = new ArrayList<>();
+
+                //store ids by using for loop
+                for(SearchResult result: searchResults)
+                {
+                    resultVideoIds.add(result.getId().getVideoId());
+                }
+
+                //call one more async method to fetch the video details
+                new FetchVideoDetails().execute(resultVideoIds.toArray(new String[0]));
+
+                //show search result in list
+//                updateSearchResultsList(searchResults);
             }
             else
             {
@@ -168,38 +206,170 @@ public class MainActivity extends AppCompatActivity
 
 
 
-
-    //to show output related to query in listview
-    private void updateSearchResultsList(List<SearchResult> results)
+    //fetch video details from metadata
+    private class FetchVideoDetails extends AsyncTask<String, Void, List<YoutubeModel>>
     {
-//        searchResults.clear();
-        for (SearchResult result : results)
+        @Override
+        protected List<YoutubeModel> doInBackground(String... videoIds)
         {
-            String videoTitle = result.getSnippet().getTitle();
-            String videoImageUrl = result.getSnippet().getThumbnails().getDefault().getUrl();
-            String videoId = result.getId().getVideoId();
+            try
+            {
+                //get the videos list and metadata of snippet and content details part
+                YouTube.Videos.List videoDetailsList = youTube.videos().list("snippet, contentDetails");
+                videoDetailsList.setId(String.join(",", videoIds));
+                videoDetailsList.setMaxResults(100L);
+                videoDetailsList.setFields("items(id,snippet/title,snippet/thumbnails/default/url,contentDetails/duration,snippet/categoryId)");
 
-            //for testing
-            // Log.d("Video ID", "Video ID: " + videoId);
+                //add response in one list
+                VideoListResponse response = videoDetailsList.execute();
 
-            String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
+                //make array list of all those videos
+                List<YoutubeModel> youtubeModels = new ArrayList<>();
 
-            //store this video file details in model
-            YoutubeModel youtubeModel = new YoutubeModel(videoTitle, videoImageUrl, videoUrl);
-            searchResults.add(youtubeModel);
+                //for every video from list, fetch the particular details and store it in youtube model
+                for (Video video : response.getItems())
+                {
+                    //category id to check it is music or not
+                    String categoryId = video.getSnippet().getCategoryId();
+
+                    //id 10 is for music category, if found any then and only then add details of that video in model
+                    if ("10".equals(categoryId))
+                    {
+                        //fetch and store other details
+                        String videoId = video.getId();       //for url
+                        String audioTitle = video.getSnippet().getTitle();
+
+                        //check the higher level of image resolution is available or not
+                        String audioImageUrl = null;
+                        if(video.getSnippet().getThumbnails().getMaxres() != null)   //highest resolution
+                        {
+                            audioImageUrl = video.getSnippet().getThumbnails().getMaxres().getUrl();
+                        }
+                        else if (video.getSnippet().getThumbnails().getStandard() != null)   //standard resolution
+                        {
+                            audioImageUrl = video.getSnippet().getThumbnails().getStandard().getUrl();
+                        }
+                        else if (video.getSnippet().getThumbnails().getHigh() != null)   //high resolution
+                        {
+                            audioImageUrl = video.getSnippet().getThumbnails().getHigh().getUrl();
+                        }
+                        else if (video.getSnippet().getThumbnails().getMedium() != null)    //medium resolution
+                        {
+                            audioImageUrl = video.getSnippet().getThumbnails().getMedium().getUrl();
+                        }
+                        else    //default resolution(lowest)
+                        {
+                            audioImageUrl = video.getSnippet().getThumbnails().getDefault().getUrl();
+                        }
+
+                        String audioDuration = video.getContentDetails().getDuration();
+                        String formattedAudioDuration = formatDuration(audioDuration);
+                        String videoUrl = "https://www.youtube.com/watch?v=" + videoId;   //make url and store it for audio extracting
+
+                        //add all details in model
+                        youtubeModels.add(new YoutubeModel(audioTitle, audioImageUrl, videoUrl, formattedAudioDuration));
+                    }
+                    else
+                    {
+                        Toast.makeText(MainActivity.this,"Search only music!!!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return youtubeModels;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
         }
-        adapter.notifyDataSetChanged();
-    }//end of method
+
+
+
+        //set all the search result in listview on home page
+        @Override
+        protected void onPostExecute(List<YoutubeModel> youtubeModels)
+        {
+            progressBar.setVisibility(View.GONE);
+
+            //if list is not null then set all the values of list on home page in manner
+            if (youtubeModels != null)
+            {
+                searchResults.clear();
+                searchResults.addAll(youtubeModels);
+                adapter.notifyDataSetChanged();
+            }
+            else
+            {
+                Toast.makeText(MainActivity.this, "Failed to retrieve search results", Toast.LENGTH_SHORT).show();
+            }
+        }//end of method
+    }//end of class
+
+
+
+    //change the video duration format to normal format
+    //eg. youtube store the duration in ISO format(eg. PT3M40S), we want to show as (03:47 or 3:47)
+    private String formatDuration(String audioDuration)
+    {
+        //declare null string
+        String formattedAudioDuration = "";
+
+        //replace first two char in duration value
+        audioDuration = audioDuration.replace("PT", "");
+
+        //decalre variables to store time
+        int hours = 0, minutes = 0, seconds = 0;
+
+
+        //if hours symbol found
+        if (audioDuration.contains("H"))
+        {
+            //split value upto char H and store all value which are before the char H
+            String[] parts = audioDuration.split("H");
+            hours = Integer.parseInt(parts[0]);
+            audioDuration = parts.length > 1 ? parts[1] : "";
+        }
+
+        //if minute symbol found
+        if (audioDuration.contains("M"))
+        {
+            String[] parts = audioDuration.split("M");
+            minutes = Integer.parseInt(parts[0]);
+            audioDuration = parts.length > 1 ? parts[1] : "";
+        }
+
+        //if second symbol found
+        if (audioDuration.contains("S"))
+        {
+            seconds = Integer.parseInt(audioDuration.split("S")[0]);
+        }
+
+
+        //now check whether video is more than 1 hour long or not
+        //if yes, then show the duration in following manner -> 1:03:20
+        if (hours > 0)
+        {
+            formattedAudioDuration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        }
+        //if not found then show as -> 3:20
+        else
+        {
+            formattedAudioDuration = String.format("%02d:%02d", minutes, seconds);
+        }
+
+        //return the new formatted duration
+        return formattedAudioDuration;
+    }
 
 
 
 
     //to play audio file from list
-    private void getAudioFileUrl(String videoUrl)
+    private void getAudioFileUrl(String videoUrl, Intent i)
     {
 
         //run this method async to avoid app crashing
-        new ExtractAudioTask().execute(videoUrl);
+        new ExtractAudioTask(i).execute(videoUrl);
 
     }//end of method
 
@@ -207,7 +377,14 @@ public class MainActivity extends AppCompatActivity
 
 
     //async method to extract audio from video in background
-    private class ExtractAudioTask extends AsyncTask<String, Void, String> {
+    private class ExtractAudioTask extends AsyncTask<String, Void, String>
+    {
+
+        //constructor to declare intent
+        private Intent i;
+        public ExtractAudioTask(Intent i) {
+            this.i = i;
+        }
 
         //when user clicks the list item it will show loading bar
         protected void onPreExecute()
@@ -217,6 +394,8 @@ public class MainActivity extends AppCompatActivity
             //change the visibility of loading bar
             progressBar.setVisibility(View.VISIBLE);
         }//end of method async
+
+
 
 
 
@@ -243,6 +422,8 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
+
         //after downloading file, main page navigate to play audio page where user can listen audio
         @Override
         protected void onPostExecute(String audioUrl)
@@ -255,9 +436,9 @@ public class MainActivity extends AppCompatActivity
 //            Log.d("ExtractAudioTask", "Audio URL: " + audioUrl);
 
             //pass the audio url to play audio java file
-            Intent intent = new Intent(MainActivity.this, PlayAudio.class);
-            intent.putExtra("audioUrl", audioUrl);
-            startActivity(intent);
+//            Intent intent = new Intent(MainActivity.this, PlayAudio.class);
+            i.putExtra("audioUrl", audioUrl);
+            startActivity(i);
         }//end of method async
     }//end of method
 }//end of class

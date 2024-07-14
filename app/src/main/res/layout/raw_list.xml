@@ -7,7 +7,7 @@
 
     <ImageView
         android:id="@+id/videoImage"
-        android:layout_width="120dp"
+        android:layout_width="70dp"
         android:layout_height="70dp"
         android:src="@color/black"/>
 
@@ -15,10 +15,21 @@
         android:id="@+id/audio_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="140dp"
+        android:layout_marginStart="100dp"
         android:text="Audio_Title"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/audio_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_below="@id/audio_title"
+        android:layout_marginTop="5dp"
+        android:text="Audio_Duration"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 </RelativeLayout>

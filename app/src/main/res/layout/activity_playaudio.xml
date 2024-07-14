@@ -1,50 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        app:titleTextColor="#fff"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+
     <androidx.media3.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_height="200dp"
+        android:layout_below="@+id/songInfo"
+        android:background="@android:color/transparent"
+        app:use_controller="true"
+        app:show_timeout="0"
+        app:surface_type="none"
+        app:show_buffering="when_playing"
+        app:animation_enabled="true"
+        app:bar_height="8sp"
+        app:show_shuffle_button="true" />
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="380dp"
-        android:layout_height="550dp"
-        android:layout_marginTop="50dp"
-        android:layout_centerHorizontal="true"
-        app:cardBackgroundColor="#2ADB3978">
+
+    <LinearLayout
+        android:id="@+id/songInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#2ADB3978">
+
+        <ImageView
+            android:id="@+id/audio_image"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"/>
 
         <TextView
             android:id="@+id/audio_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:text="Song Title"
-            android:textSize="25dp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:fontFamily="monospace"
-            android:layout_marginStart="110dp"
-            android:layout_marginTop="8dp"/>
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@android:color/white"
+            android:paddingTop="8dp"/>
 
-        <ImageView
-            android:id="@+id/audio_image"
-            android:layout_width="235dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="80dp"
-            android:src="@color/pink_100" />
+    </LinearLayout>
 
-        <Button
-            android:id="@+id/play_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="400dp"
-            android:layout_marginStart="145dp"
-            android:text="Play"
-            android:padding="15dp"/>
-
-    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

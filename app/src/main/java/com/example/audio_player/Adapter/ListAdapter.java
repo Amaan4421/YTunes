@@ -18,40 +18,53 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListAdapter extends ArrayAdapter<YoutubeModel> {
+public class ListAdapter extends ArrayAdapter<YoutubeModel>
+{
 
+    //global variables
     Context context;
     private List<YoutubeModel> youtubeModels;
 
-    public ListAdapter(Context context, ArrayList<YoutubeModel> youtubeModels) {
+
+    //set adapter file
+    public ListAdapter(Context context, ArrayList<YoutubeModel> youtubeModels)
+    {
         super(context, R.layout.raw_list, youtubeModels);
         this.context = context;
         this.youtubeModels = youtubeModels;
     }
 
+
+    //get data and set in view
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
+    {
+        //set view
         View view = convertView;
-        if (view ==  null) {
+        if (view ==  null)
+        {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.raw_list, null);
         }
 
-        TextView videotitle = view.findViewById(R.id.audio_title);
-        ImageView videoImage = view.findViewById(R.id.videoImage);
+        //take references from xml file
+        TextView audioDuration = view.findViewById(R.id.audio_duration);
+        TextView audiotitle = view.findViewById(R.id.audio_title);
+        ImageView audioImage = view.findViewById(R.id.videoImage);
 
         YoutubeModel youtubeModel = getItem(position);
         if (youtubeModel != null)
         {
-            videotitle.setText(youtubeModel.getVideoTitle());
-            Picasso.get().load(youtubeModel.getVideoImageUrl()).into(videoImage);
+            audiotitle.setText(youtubeModel.getVideoTitle());
+            Picasso.get().load(youtubeModel.getVideoImageUrl()).into(audioImage);
+            audioDuration.setText(youtubeModel.getDuration());
         }
         else
         {
-            videotitle.setText("Loading...");
-            videoImage.setImageDrawable(null);
+            audiotitle.setText("Loading...");
+            audioImage.setImageDrawable(null);
+            audioDuration.setText("0:00");
         }
         return view;
     }

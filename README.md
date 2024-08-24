@@ -3,10 +3,19 @@ AudioPlayer is an Android application designed for seamless music streaming from
 
 # AudioPlayer is an Android application designed for following features:
 
-- Seamless Music Streaming: Stream music directly from YouTube with ease.
+- Seamless Music Streaming: Stream music directly from YouTube with ease thanks to integration with '[yt-dlp](https://github.com/yt-dlp/yt-dlp)'.
 - User-Friendly Interface: Enjoy a sleek and intuitive design for a smooth experience.
 - Playlist Management: Create and manage your playlists effortlessly.
 - Background Playback: Keep your music playing while you use other apps or lock your device.
+
+
+# Technical Information
+
+# yt-dlp
+AudioPlayer utilizes yt-dlp, a powerful and flexible fork of youtube-dl, for efficient YouTube video and audio extraction. yt-dlp enhances the app’s ability to fetch high-quality audio streams and manage various video formats, improving your overall streaming experience.
+
+# Chaquopy
+The app integrates Python code into the Java-based Android application using Chaquopy, version 15.0.0. Chaquopy is a plugin that enables Python and Java interoperability, making it easier to incorporate Python libraries and scripts into your Android project. This setup enhances the app’s functionality and provides a robust solution for complex processing tasks.
 
 
 # Features

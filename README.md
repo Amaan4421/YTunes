@@ -43,6 +43,17 @@ AudioPlayer is an Android application designed for seamless music streaming from
 - After enabling the API, go to the Credentials tab on the left sidebar.
 - Click on Create Credentials and select API Key from the dropdown.
 - Your new API key will be generated and displayed. Copy that key and paste it in gradle.properties file in Android Studio.
+
+
+  # Project Information
+
+  ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+  ![License](https://img.shields.io/badge/license-MIT-blue)
+  ![Chaquopy](https://img.shields.io/badge/chaquopy-v15.0.0-orange)
+  ![Android Version](https://img.shields.io/badge/android%20version-1.0-green)
+  ![Min SDK](https://img.shields.io/badge/min%20SDK-24-blue)
+  ![Target SDK](https://img.shields.io/badge/target%20SDK-34-blue)
+
   
 
 # Contribution 

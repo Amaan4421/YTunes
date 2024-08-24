@@ -48,19 +48,19 @@ AudioPlayer is an Android application designed for seamless music streaming from
   # Project Information
 
   App Status:
-  - The app is now in a stable state and available for users. [Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+  - The app is now in a stable state and available for users. ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
     
 
   Technical Specifications:
-  - [Chaquopy](https://img.shields.io/badge/chaquopy-v15.0.0-orange)  Chaquopy Version: 15.0.0
-  - [Android Version](https://img.shields.io/badge/android%20version-1.0-green)  Android Version: 1.0
-  - [Min SDK](https://img.shields.io/badge/min%20SDK-24-blue)  Min SDK: 24
-  - [Target SDK](https://img.shields.io/badge/target%20SDK-34-blue)  Target SDK: 34
+  - ![Chaquopy](https://img.shields.io/badge/chaquopy-v15.0.0-orange)  Chaquopy Version: 15.0.0
+  - ![Android Version](https://img.shields.io/badge/android%20version-1.0-green)  Android Version: 1.0
+  - ![Min SDK](https://img.shields.io/badge/min%20SDK-24-blue)  Min SDK: 24
+  - ![Target SDK](https://img.shields.io/badge/target%20SDK-34-blue)  Target SDK: 34
 
 
   License:
-  - [License](https://img.shields.io/badge/license-MIT-blue)
-  - Chaquopy License: The app uses Chaquopy version 15.0.0, which is licensed under its own terms. For more details, refer to [Chaquopy License Information](https://chaquo.com/chaquopy/doc/current/changelog.html).
+  - ![License](https://img.shields.io/badge/license-MIT-blue)
+  - Chaquopy License: The app uses Chaquopy version 15.0.0, which is licensed under its own terms. For more details, refer to [Chaquopy License Information]    (https://chaquo.com/chaquopy/doc/current/changelog.html).
   - Other Dependencies: All other dependencies and their licenses are managed through Gradle and are subject to their respective terms.
 
 

@@ -15,7 +15,7 @@ public class SplashActivity extends AppCompatActivity {
 
     TextView text;
     ImageView img;
-    int time = 3000;
+    int time = 2000;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

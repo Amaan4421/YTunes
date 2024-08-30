@@ -3,6 +3,7 @@ package com.example.audio_player.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -194,8 +195,6 @@ public class MainActivity extends AppCompatActivity
                 //call one more async method to fetch the video details
                 new FetchVideoDetails().execute(resultVideoIds.toArray(new String[0]));
 
-                //show search result in list
-//                updateSearchResultsList(searchResults);
             }
             else
             {
@@ -218,7 +217,10 @@ public class MainActivity extends AppCompatActivity
                 YouTube.Videos.List videoDetailsList = youTube.videos().list("snippet, contentDetails");
                 videoDetailsList.setId(String.join(",", videoIds));
                 videoDetailsList.setMaxResults(100L);
-                videoDetailsList.setFields("items(id,snippet/title,snippet/thumbnails/default/url,contentDetails/duration,snippet/categoryId)");
+                videoDetailsList.setFields("items(id,snippet/title," +
+                        "snippet/thumbnails/default/url,snippet/thumbnails/medium/url," +
+                        "snippet/thumbnails/high/url,snippet/thumbnails/standard/url," +
+                        "snippet/thumbnails/maxres/url,contentDetails/duration,snippet/categoryId)");
 
                 //add response in one list
                 VideoListResponse response = videoDetailsList.execute();
@@ -244,22 +246,27 @@ public class MainActivity extends AppCompatActivity
                         if(video.getSnippet().getThumbnails().getMaxres() != null)   //highest resolution
                         {
                             audioImageUrl = video.getSnippet().getThumbnails().getMaxres().getUrl();
+                            Log.d("Max res url", audioImageUrl);
                         }
                         else if (video.getSnippet().getThumbnails().getStandard() != null)   //standard resolution
                         {
                             audioImageUrl = video.getSnippet().getThumbnails().getStandard().getUrl();
+                            Log.d("Stan res url", audioImageUrl);
                         }
                         else if (video.getSnippet().getThumbnails().getHigh() != null)   //high resolution
                         {
                             audioImageUrl = video.getSnippet().getThumbnails().getHigh().getUrl();
+                            Log.d("High res url", audioImageUrl);
                         }
                         else if (video.getSnippet().getThumbnails().getMedium() != null)    //medium resolution
                         {
                             audioImageUrl = video.getSnippet().getThumbnails().getMedium().getUrl();
+                            Log.d("Medium res url", audioImageUrl);
                         }
                         else    //default resolution(lowest)
                         {
                             audioImageUrl = video.getSnippet().getThumbnails().getDefault().getUrl();
+                            Log.d("Default res url", audioImageUrl);
                         }
 
                         String audioDuration = video.getContentDetails().getDuration();
@@ -304,6 +311,7 @@ public class MainActivity extends AppCompatActivity
             }
         }//end of method
     }//end of class
+
 
 
 
@@ -434,9 +442,8 @@ public class MainActivity extends AppCompatActivity
             //for testing
 //            Toast.makeText(MainActivity.this, "Audio extracted successfully", Toast.LENGTH_SHORT).show();
 //            Log.d("ExtractAudioTask", "Audio URL: " + audioUrl);
-
-            //pass the audio url to play audio java file
 //            Intent intent = new Intent(MainActivity.this, PlayAudio.class);
+
             i.putExtra("audioUrl", audioUrl);
             startActivity(i);
         }//end of method async

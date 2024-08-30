@@ -1,7 +1,7 @@
-# AudioPlayer
-AudioPlayer is an Android application designed for seamless music streaming from YouTube. With a sleek, user-friendly interface, this app provides a rich listening experience, allowing you to easily browse, search, and play your favorite tracks. It also supports playlist management and background playback, ensuring your music experience remains uninterrupted. Whether you're a casual listener or a music enthusiast, AudioPlayer offers a convenient way to enjoy YouTube's vast music library on the go.
+# YTunes
+YTunes is an Android application designed for seamless music streaming from YouTube. With a sleek, user-friendly interface, this app provides a rich listening experience, allowing you to easily browse, search, and play your favorite tracks. It also supports playlist management and background playback, ensuring your music experience remains uninterrupted. Whether you're a casual listener or a music enthusiast, YTunes offers a convenient way to enjoy YouTube's vast music library on the go.
 
-# AudioPlayer is an Android application designed for following features:
+# YTunes is an Android application designed for following features:
 
 - Seamless Music Streaming: Stream music directly from YouTube with ease thanks to integration with '[yt-dlp](https://github.com/yt-dlp/yt-dlp)'.
 - User-Friendly Interface: Enjoy a sleek and intuitive design for a smooth experience.
@@ -12,7 +12,7 @@ AudioPlayer is an Android application designed for seamless music streaming from
 # Technical Information
 
 # yt-dlp
-AudioPlayer utilizes yt-dlp, a powerful and flexible fork of youtube-dl, for efficient YouTube video and audio extraction. yt-dlp enhances the app’s ability to fetch high-quality audio streams and manage various video formats, improving your overall streaming experience.
+YTunes utilizes yt-dlp, a powerful and flexible fork of youtube-dl, for efficient YouTube video and audio extraction. yt-dlp enhances the app’s ability to fetch high-quality audio streams and manage various video formats, improving your overall streaming experience.
 
 # Chaquopy
 The app integrates Python code into the Java-based Android application using Chaquopy, version 15.0.0. Chaquopy is a plugin that enables Python and Java interoperability, making it easier to incorporate Python libraries and scripts into your Android project. This setup enhances the app’s functionality and provides a robust solution for complex processing tasks.
@@ -28,7 +28,7 @@ The app integrates Python code into the Java-based Android application using Cha
 
 # Installation
 
-- Clone the repo: git clone https://github.com/Amaan4421/AudioPlayer.git
+- Clone the repo: git clone https://github.com/Amaan4421/YTunes.git
 - Open the project in Android Studio.
 - Obtain your own YouTube Data API key from the [Google Cloud Console](https://console.cloud.google.com/). 
 - Add the API key to your gradle.properties file with the name API_KEY.

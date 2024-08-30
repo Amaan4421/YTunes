@@ -21,6 +21,7 @@ import com.example.audio_player.Adapter.ListAdapter;
 import com.example.audio_player.BuildConfig;
 import com.example.audio_player.Model.YoutubeModel;
 import com.example.audio_player.R;
+import com.example.audio_player.Utils.FetchTrendingMusic;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
@@ -33,7 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements FetchTrendingMusic.FetchTrendingMusicCallback
 {
 
     private EditText searchEditText;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity
         searchResults = new ArrayList<>();
         adapter = new ListAdapter(this, searchResults);
         searchListView.setAdapter(adapter);
+
 
 
 
@@ -118,7 +120,29 @@ public class MainActivity extends AppCompatActivity
                 }
         ).setYouTubeRequestInitializer(new YouTubeRequestInitializer(api_key))
                 .setApplicationName(getString(R.string.app_name)).build();
-    }//end of on create method
+
+
+
+        //show trending songs when user opens app
+        FetchTrendingMusic fetchTrendingMusic = new FetchTrendingMusic(youTube, (FetchTrendingMusic.FetchTrendingMusicCallback) this);
+        fetchTrendingMusic.fetchTrendingSongs();
+
+    }//end of onCreate method
+
+
+    //calling callback function to fetch trending music
+    public void onFetchTrendingMusic(List<YoutubeModel> youtubeModels)
+    {
+        searchResults.clear();
+        searchResults.addAll(youtubeModels);
+        adapter.notifyDataSetChanged();
+    }//end of method
+
+    //show error
+    public void onError(String error)
+    {
+        Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
+    }//end of method
 
 
 
@@ -161,7 +185,7 @@ public class MainActivity extends AppCompatActivity
                 //search in youtube and get snippet data from video metadata
                 YouTube.Search.List searchList = youTube.search().list("snippet");
                 searchList.setQ(params[0]);
-                searchList.setType("audio");
+                searchList.setType("video");
                 searchList.setMaxResults(100L);
 
                 //add response in one list
@@ -275,10 +299,6 @@ public class MainActivity extends AppCompatActivity
 
                         //add all details in model
                         youtubeModels.add(new YoutubeModel(audioTitle, audioImageUrl, videoUrl, formattedAudioDuration));
-                    }
-                    else
-                    {
-                        Toast.makeText(MainActivity.this,"Search only music!!!", Toast.LENGTH_SHORT).show();
                     }
                 }
                 return youtubeModels;

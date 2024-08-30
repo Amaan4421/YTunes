@@ -58,8 +58,9 @@
     <ListView
         android:id="@+id/searchList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_below="@id/searchButton"
+        android:layout_above="@id/bottom_view"
         android:layout_marginTop="16dp"
         android:divider="@null"
         android:dividerHeight="4dp"/>
@@ -71,5 +72,16 @@
         android:layout_centerInParent="true"
         android:background="@color/white"
         android:visibility="gone"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/toolbar_bg"
+        app:menu="@menu/bottom_menu"
+        app:itemTextColor="@color/pink"
+        app:itemIconTint="@color/pink"
+        app:itemIconSize="24dp"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

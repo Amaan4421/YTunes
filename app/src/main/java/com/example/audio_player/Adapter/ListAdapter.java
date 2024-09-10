@@ -26,7 +26,7 @@ public class ListAdapter extends ArrayAdapter<YoutubeModel>
     private List<YoutubeModel> youtubeModels;
 
 
-    //set adapter file
+    //set adapter file constructor
     public ListAdapter(Context context, ArrayList<YoutubeModel> youtubeModels)
     {
         super(context, R.layout.raw_list, youtubeModels);

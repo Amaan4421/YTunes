@@ -23,7 +23,7 @@ public class FetchTrendingMusic {
 
     //interface
     public interface FetchTrendingMusicCallback {
-        void onFetchTrendingMusic(List<YoutubeModel> youtubeModels);
+        void onFetchTrendingMusic(List<YoutubeModel> trendingSongs, List<YoutubeModel> hindiSongs);
         void onError(String error);
     }
 
@@ -36,10 +36,12 @@ public class FetchTrendingMusic {
         this.fetchTrendingRunnable = new Runnable() {
             @Override
             public void run() {
+
                 fetchTrendingSongs();
+                fetchTrendingHindiSongs();
 
                 //next update
-                handler.postDelayed(this, 20000); // 20 seconds
+                handler.postDelayed(this, 30000);
             }
         };
         startFetchingTrendingMusic();
@@ -56,6 +58,8 @@ public class FetchTrendingMusic {
     public void fetchTrendingSongs() {
         new FetchTrendingMusicTask().execute();
     }
+
+    public void fetchTrendingHindiSongs() { new FetchTrendingHindiMusicTask().execute(); }
 
 
     //aysnc method to get trending videos
@@ -101,11 +105,63 @@ public class FetchTrendingMusic {
         @Override
         protected void onPostExecute(List<YoutubeModel> youtubeModels) {
             if (youtubeModels != null) {
-                callback.onFetchTrendingMusic(youtubeModels);
+                callback.onFetchTrendingMusic(youtubeModels, null);
+            }
+        }
+    }
+
+
+
+    //aysnc method to get hindi trending videos
+    private class FetchTrendingHindiMusicTask extends AsyncTask<Void, Void, List<YoutubeModel>> {
+
+        @Override
+        protected List<YoutubeModel> doInBackground(Void... voids) {
+            try {
+                YouTube.Videos.List videoDetailsList = youTube.videos().list("snippet, contentDetails");
+                videoDetailsList.setChart("mostPopular");
+                videoDetailsList.setRegionCode("IN");
+                videoDetailsList.setVideoCategoryId("10");
+                videoDetailsList.setMaxResults(50L);
+                videoDetailsList.setFields("items(id,snippet/title," +
+                        "snippet/thumbnails/default/url,snippet/thumbnails/medium/url," +
+                        "snippet/thumbnails/high/url,snippet/thumbnails/standard/url," +
+                        "snippet/thumbnails/maxres/url,contentDetails/duration,snippet/categoryId)");
+
+                VideoListResponse response = videoDetailsList.execute();
+
+                List<YoutubeModel> youtubeModels = new ArrayList<>();
+                for (Video video : response.getItems()) {
+                    String categoryId = video.getSnippet().getCategoryId();
+
+                    if ("10".equals(categoryId)) {
+                        String videoId = video.getId();
+                        String audioTitle = video.getSnippet().getTitle();
+                        String audioImageUrl = getHighestResolutionThumbnail(video);
+                        String audioDuration = video.getContentDetails().getDuration();
+                        String formattedAudioDuration = formatDuration(audioDuration);
+                        String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
+
+                        youtubeModels.add(new YoutubeModel(audioTitle, audioImageUrl, videoUrl, formattedAudioDuration));
+                    }
+                }
+                return youtubeModels;
+            } catch (IOException e) {
+                e.printStackTrace();
+                callback.onError("Failed to retrieve trending videos");
+                return null;
             }
         }
 
-        private String getHighestResolutionThumbnail(Video video) {
+        @Override
+        protected void onPostExecute(List<YoutubeModel> youtubeModels) {
+            if (youtubeModels != null) {
+                callback.onFetchTrendingMusic(null, youtubeModels);
+            }
+        }
+    }
+
+        public String getHighestResolutionThumbnail(Video video) {
             if (video.getSnippet().getThumbnails().getMaxres() != null) {
                 return video.getSnippet().getThumbnails().getMaxres().getUrl();
             } else if (video.getSnippet().getThumbnails().getStandard() != null) {
@@ -119,7 +175,7 @@ public class FetchTrendingMusic {
             }
         }
 
-        private String formatDuration(String audioDuration) {
+        public String formatDuration(String audioDuration) {
             String formattedAudioDuration = "";
             audioDuration = audioDuration.replace("PT", "");
             int hours = 0, minutes = 0, seconds = 0;
@@ -148,5 +204,4 @@ public class FetchTrendingMusic {
 
             return formattedAudioDuration;
         }
-    }
 }

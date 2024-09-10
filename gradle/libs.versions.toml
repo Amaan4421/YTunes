@@ -17,6 +17,8 @@ media3Exoplayer = "1.4.1"
 picasso = "2.71828"
 playServicesAuth = "21.2.0"
 media3ExoplayerVersion = "1.4.1"
+navigationFragment = "2.7.7"
+navigationUi = "2.7.7"
 
 
 [libraries]
@@ -40,6 +42,8 @@ media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplay
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3ExoplayerVersion" }
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 
 
 [plugins]

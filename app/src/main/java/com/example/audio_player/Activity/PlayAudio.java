@@ -131,9 +131,9 @@ public class PlayAudio extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        //go back to home screen
-        Intent i = new Intent(PlayAudio.this, MainActivity.class);
-        startActivity(i);
-        finish();
+//        //go back to home screen
+//        Intent i = new Intent(PlayAudio.this, MainActivity.class);
+//        startActivity(i);
+//        finish();
     }//end of method
 }//end of class

@@ -1,27 +1,17 @@
 package com.example.audio_player.Activity;
 
 import android.annotation.SuppressLint;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,7 +21,6 @@ import com.chaquo.python.android.AndroidPlatform;
 import com.example.audio_player.Adapter.HindiListAdapter;
 import com.example.audio_player.Adapter.ListAdapter;
 import com.example.audio_player.BuildConfig;
-import com.example.audio_player.Fragment.SearchResultFragment;
 import com.example.audio_player.Model.YoutubeModel;
 import com.example.audio_player.R;
 import com.example.audio_player.Utils.FetchTrendingMusic;
@@ -39,10 +28,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.api.services.youtube.model.SearchResult;
-import com.google.api.services.youtube.model.Video;
-import com.google.api.services.youtube.model.VideoListResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,8 +66,7 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
         //get ids from xml file
         progressBar = findViewById(R.id.showLoading);
         searchButton = findViewById(R.id.searchButton);
-        ListView searchListView = findViewById(R.id.searchList);
-        @SuppressLint({"MissingInflatedId", "LocalSuppress"})
+        RecyclerView searchListView = findViewById(R.id.searchList);
         RecyclerView hindiListView = findViewById(R.id.hindiRecyclerView);
 
 
@@ -98,10 +82,24 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
 
 
 
-        //set values to all arraylist and adapter
+
+//when user clicks any item in list, get the video url of that item from model and extract audio file and pass to next activity
+// also pass the image and title to next page
+
+        //on click event for worldwide trending songs list to play that song
         searchResults = new ArrayList<>();
-        adapter = new ListAdapter(this, searchResults);
-        searchListView.setAdapter(adapter);
+        adapter = new ListAdapter(this, searchResults, new ListAdapter.ClickEvent() {
+            @Override
+            public void onItemClick(YoutubeModel youtubeModel)
+            {
+                Intent i = new Intent(MainActivity.this, PlayAudio.class);
+                i.putExtra("title", youtubeModel.getVideoTitle());
+                i.putExtra("image", youtubeModel.getVideoImageUrl());
+                getAudioFileUrl(youtubeModel.getVideoUrl(), i);
+            }
+        });
+        searchListView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        searchListView.setAdapter(adapter);          //end of worldwide songs adapter method
 
 
 
@@ -119,26 +117,8 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
 
         //to set songs list horizontally
         hindiListView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        hindiListView.setAdapter(hindiListAdapter);
+        hindiListView.setAdapter(hindiListAdapter);          //end of hindi songs adapter method
 
-
-
-
-
-        //when user clicks any item in list, get the video url of that item from model and extract audio file and pass to next activity
-        //also pass the image and title to next page
-        searchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                YoutubeModel item = searchResults.get(position);
-                Intent i = new Intent(MainActivity.this, PlayAudio.class);
-                i.putExtra("title", item.getVideoTitle());
-                i.putExtra("image", item.getVideoImageUrl());
-                getAudioFileUrl(item.getVideoUrl(), i);
-            }
-        }); //end of listview
-        
 
 
 
@@ -307,3 +287,4 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
         }//end of method async
     }//end of method
 }//end of class
+

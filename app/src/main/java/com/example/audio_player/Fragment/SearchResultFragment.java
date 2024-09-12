@@ -1,5 +1,6 @@
 package com.example.audio_player.Fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
@@ -41,7 +44,7 @@ public class SearchResultFragment extends Fragment
     private String query;
     private ProgressBar progressBar;
     private YouTube youTube;
-    private ListView searchResultList;
+    private RecyclerView searchResultList;
     private ArrayList<YoutubeModel> searchResults;
     private ListAdapter adapter;
 
@@ -73,6 +76,7 @@ public class SearchResultFragment extends Fragment
 
 
     //on create view method to load UI
+    @SuppressLint("WrongViewCast")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -84,26 +88,26 @@ public class SearchResultFragment extends Fragment
         searchResultList = view.findViewById(R.id.searchResultList);
         progressBar = view.findViewById(R.id.showLoading);
 
+
+
         //create blank list to store search result and pass it to adapter
         searchResults = new ArrayList<>();
-        adapter = new ListAdapter(getContext(), searchResults);
-        searchResultList.setAdapter(adapter);
-
 
         //when user clicks any item in list, get the video url of that item from model
         //also pass the image and title to next page
-        searchResultList.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        adapter = new ListAdapter(getContext(), searchResults, new ListAdapter.ClickEvent() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            public void onItemClick(YoutubeModel youtubeModel)
             {
-                YoutubeModel item = searchResults.get(position);
                 Intent i = new Intent(getContext(), PlayAudio.class);
-                i.putExtra("title", item.getVideoTitle());
-                i.putExtra("image", item.getVideoImageUrl());
-                getAudioFileUrl(item.getVideoUrl(), i);
+                i.putExtra("title", youtubeModel.getVideoTitle());
+                i.putExtra("image", youtubeModel.getVideoImageUrl());
+                getAudioFileUrl(youtubeModel.getVideoUrl(), i);
             }
-        }); //end of listview
+        });//end of onClick method
+        searchResultList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        //set result in list
+        searchResultList.setAdapter(adapter);
 
 
 
@@ -164,6 +168,7 @@ public class SearchResultFragment extends Fragment
                 YouTube.Search.List searchList = youTube.search().list("snippet");
                 searchList.setQ(params[0]);
                 searchList.setType("video");
+                searchList.setVideoCategoryId("10");
                 searchList.setMaxResults(100L);
 
                 //add response in one list

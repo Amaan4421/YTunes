@@ -4,68 +4,75 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audio_player.Model.YoutubeModel;
 import com.example.audio_player.R;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ListAdapter extends ArrayAdapter<YoutubeModel>
+public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>
 {
 
-    //global variables
-    Context context;
-    private List<YoutubeModel> youtubeModels;
+    private final Context context;
+    private final ClickEvent onItemClickListener;
+    private final List<YoutubeModel> youtubeModels;
 
-
-    //set adapter file constructor
-    public ListAdapter(Context context, ArrayList<YoutubeModel> youtubeModels)
-    {
-        super(context, R.layout.raw_list, youtubeModels);
+    public ListAdapter(Context context, List<YoutubeModel> youtubeModels, ClickEvent onItemClickListener) {
         this.context = context;
         this.youtubeModels = youtubeModels;
+        this.onItemClickListener = onItemClickListener;
     }
 
-
-    //get data and set in view
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.raw_list, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position)
     {
-        //set view
-        View view = convertView;
-        if (view ==  null)
-        {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.raw_list, null);
-        }
+        YoutubeModel youtubeModel = youtubeModels.get(position);
+        holder.audioTitle.setText(youtubeModel.getVideoTitle());
+        holder.audioDuration.setText(youtubeModel.getDuration());
+        Picasso.get().load(youtubeModel.getVideoImageUrl()).into(holder.audioImage);
 
-        //take references from xml file
-        TextView audioDuration = view.findViewById(R.id.audio_duration);
-        TextView audiotitle = view.findViewById(R.id.audio_title);
-        ImageView audioImage = view.findViewById(R.id.videoImage);
 
-        YoutubeModel youtubeModel = getItem(position);
-        if (youtubeModel != null)
-        {
-            audiotitle.setText(youtubeModel.getVideoTitle());
-            Picasso.get().load(youtubeModel.getVideoImageUrl()).into(audioImage);
-            audioDuration.setText(youtubeModel.getDuration());
+        //pass the onClick event to main activity for playing that song
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                onItemClickListener.onItemClick(youtubeModel);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return youtubeModels.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView audioTitle, audioDuration;
+        ImageView audioImage;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            audioTitle = itemView.findViewById(R.id.audio_title);
+            audioDuration = itemView.findViewById(R.id.audio_duration);
+            audioImage = itemView.findViewById(R.id.videoImage);
         }
-        else
-        {
-            audiotitle.setText("Loading...");
-            audioImage.setImageDrawable(null);
-            audioDuration.setText("0:00");
-        }
-        return view;
+    }
+
+    public interface ClickEvent {
+        void onItemClick(YoutubeModel youtubeModel);
     }
 }

@@ -9,6 +9,6 @@
         <item name="colorPrimaryVariant">@color/red</item>
         <item name="colorSecondary">#07F3C3</item>
         <item name="android:buttonStyle">@drawable/button_bg</item>
-
     </style>
+
 </resources>

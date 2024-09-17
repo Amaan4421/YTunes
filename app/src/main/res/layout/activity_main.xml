@@ -96,6 +96,30 @@
                 android:layout_marginStart="10dp"/>
 
             <TextView
+                android:id="@+id/tv_recent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recently Played"
+                app:layout_constraintTop_toBottomOf="@id/hindiRecyclerView"
+                android:textSize="25sp"
+                android:textColor="@color/pink_100"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recentRecyclerView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tv_recent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_marginStart="10dp"/>
+
+            <TextView
                 android:id="@+id/tv_trending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -103,7 +127,7 @@
                 android:textSize="25sp"
                 android:textColor="@color/pink_100"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/hindiRecyclerView"
+                app:layout_constraintTop_toBottomOf="@id/recentRecyclerView"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"/>
@@ -120,20 +144,20 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginHorizontal="10dp"/>
 
-            <ProgressBar
-                android:id="@+id/showLoading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/showLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center"
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"

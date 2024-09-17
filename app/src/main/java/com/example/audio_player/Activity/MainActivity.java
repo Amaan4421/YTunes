@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
             @Override
             public void onItemClick(YoutubeModel youtubeModel)
             {
+                progressBar.setVisibility(View.VISIBLE);
+
                 Intent i = new Intent(MainActivity.this, PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
@@ -107,7 +109,10 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
         hindiSongs = new ArrayList<>();
         hindiListAdapter = new HindiListAdapter(this, hindiSongs, new HindiListAdapter.ClickEvent() {
             @Override
-            public void onItemClick(YoutubeModel youtubeModel) {
+            public void onItemClick(YoutubeModel youtubeModel)
+            {
+                progressBar.setVisibility(View.VISIBLE);
+
                 Intent i = new Intent(MainActivity.this, PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
@@ -245,16 +250,6 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
             this.i = i;
         }
 
-        //when user clicks the list item it will show loading bar
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-
-            //change the visibility of loading bar
-            progressBar.setVisibility(View.VISIBLE);
-        }//end of method async
-
-
 
         //this method will download the audio file by using python script
         @Override
@@ -279,7 +274,6 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
         @Override
         protected void onPostExecute(String audioUrl)
         {
-            //change the visibility of loading bar again
             progressBar.setVisibility(View.GONE);
 
             i.putExtra("audioUrl", audioUrl);

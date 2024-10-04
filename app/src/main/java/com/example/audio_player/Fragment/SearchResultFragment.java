@@ -275,7 +275,7 @@ public class SearchResultFragment extends Fragment
                         String videoUrl = "https://www.youtube.com/watch?v=" + videoId;   //make url and store it for audio extracting
 
                         //add all details in model
-                        youtubeModels.add(new YoutubeModel(audioTitle, audioImageUrl, videoUrl, formattedAudioDuration));
+                        youtubeModels.add(new YoutubeModel(videoId, audioTitle, audioImageUrl, videoUrl, formattedAudioDuration));
                     }//end of if
                 }//end of for
                 return youtubeModels;

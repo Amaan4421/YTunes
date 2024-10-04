@@ -8,13 +8,15 @@ import androidx.annotation.NonNull;
 
 public class YoutubeModel implements Parcelable
 {
+    private final String videoId;
     private final String videoTitle;
     private final String videoImageUrl;
     private final String videoUrl;
     private final String duration;
 
-    public YoutubeModel(String videoTitle, String videoImageUrl, String videoUrl, String duration)
+    public YoutubeModel(String videoId, String videoTitle, String videoImageUrl, String videoUrl, String duration)
     {
+        this.videoId = videoId;
         this.videoTitle = videoTitle;
         this.videoImageUrl = videoImageUrl;
         this.videoUrl = videoUrl;
@@ -22,6 +24,7 @@ public class YoutubeModel implements Parcelable
     }
 
     protected YoutubeModel(Parcel in) {
+        videoId = in.readString();
         videoTitle = in.readString();
         videoImageUrl = in.readString();
         videoUrl = in.readString();
@@ -40,6 +43,7 @@ public class YoutubeModel implements Parcelable
         }
     };
 
+    public String getVideoId(){ return videoId; }
     public String getVideoTitle()
     {
         return videoTitle;
@@ -67,6 +71,7 @@ public class YoutubeModel implements Parcelable
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(videoId);
         parcel.writeString(videoTitle);
         parcel.writeString(videoImageUrl);
         parcel.writeString(videoUrl);

@@ -44,7 +44,8 @@
 
         <service
             android:name=".Services.BackgroundPlayService"
-            android:exported="false"
+            android:exported="true"
             android:foregroundServiceType="mediaPlayback" />
+
     </application>
 </manifest>

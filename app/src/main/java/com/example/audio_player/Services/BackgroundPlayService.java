@@ -162,6 +162,12 @@ public class BackgroundPlayService extends MediaSessionService
                     initializePlayer(audioUrl);
                 }//end of inner if
             }//end of inner if
+            else if (action.equals("ACTION_PAUSE")) {
+                if (exoPlayer.isPlaying()) {
+                    exoPlayer.pause();
+                    updateNotification();
+                }
+            }
         }//end of if
         else
         {
@@ -183,6 +189,11 @@ public class BackgroundPlayService extends MediaSessionService
         exoPlayer.play();
     }//end of method
 
+    private void updateNotification() {
+        // Update your notification based on whether the player is playing or paused
+        playerNotificationManager.setPlayer(exoPlayer);
+    }
+
 
 
     //if user removes the notification, stop the player and release
@@ -190,7 +201,8 @@ public class BackgroundPlayService extends MediaSessionService
     public void onDestroy()
     {
         super.onDestroy();
-        //relese player
+
+        //release player
         if (exoPlayer != null)
         {
             exoPlayer.release();

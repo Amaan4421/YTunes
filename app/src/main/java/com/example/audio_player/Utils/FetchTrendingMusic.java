@@ -47,7 +47,7 @@ public class FetchTrendingMusic {
                 fetchTrendingHindiSongs();
 
                 //next update
-                handler.postDelayed(this, 30000);
+                handler.postDelayed(this, 60000);
             }
         };
         startFetchingTrendingMusic();
@@ -102,7 +102,7 @@ public class FetchTrendingMusic {
                         String formattedAudioDuration = formatDuration(audioDuration);
                         String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
 
-                        youtubeModels.add(new YoutubeModel(audioTitle, audioImageUrl, videoUrl, formattedAudioDuration));
+                        youtubeModels.add(new YoutubeModel(videoId, audioTitle, audioImageUrl, videoUrl, formattedAudioDuration));
                     }//end of if
                 }//end of for
                 return youtubeModels;
@@ -220,7 +220,7 @@ public class FetchTrendingMusic {
                     String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
 
                     // Add the video details to the list
-                    youtubeModels.add(new YoutubeModel(audioTitle, audioImageUrl, videoUrl, audioDuration));
+                    youtubeModels.add(new YoutubeModel(videoId, audioTitle, audioImageUrl, videoUrl, audioDuration));
                 }//end of for
                 return youtubeModels;
             }//end of try

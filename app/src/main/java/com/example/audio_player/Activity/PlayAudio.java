@@ -2,35 +2,45 @@ package com.example.audio_player.Activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.audio_player.Adapter.RelatedSongAdapter;
+import com.example.audio_player.BuildConfig;
+import com.example.audio_player.Model.RelatedSongsModel;
 import com.example.audio_player.R;
+import com.example.audio_player.Services.BackgroundPlayService;
+import com.example.audio_player.Utils.FetchRelatedSongs;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.YouTubeRequestInitializer;
 import com.squareup.picasso.Picasso;
 
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 public class PlayAudio extends AppCompatActivity {
 
     private ExoPlayer player;
+    YouTube youTube;
     private ImageButton playPauseButton, nextButton, prevButton, shuffleButton, repeatButton;
     private ImageView favoriteButton;
     private SeekBar seekBar;
@@ -39,9 +49,10 @@ public class PlayAudio extends AppCompatActivity {
     private boolean isShuffleOn = false;
     private boolean isRepeatOn = false;
     private boolean isFavorite = false;
-    private RecyclerView queueList;
-    private ListAdapter listAdapter;
+    private RecyclerView relatedSongsList;
+    private RelatedSongAdapter relatedSongAdapter;
 
+    @OptIn(markerClass = UnstableApi.class)
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,6 +65,7 @@ public class PlayAudio extends AppCompatActivity {
         String audioUrl = intent.getStringExtra("audioUrl");
         String title = intent.getStringExtra("title");
         String image = intent.getStringExtra("image");
+        String videoId = intent.getStringExtra("videoId");
 
 
         //get variable reference from xml file
@@ -68,7 +80,7 @@ public class PlayAudio extends AppCompatActivity {
         totalTime = findViewById(R.id.totalTime);
         ImageView songImage = findViewById(R.id.songImage);
         songTitle = findViewById(R.id.songTitle);
-        queueList = findViewById(R.id.queueList);
+        relatedSongsList = findViewById(R.id.queueList);
 
 
 
@@ -81,11 +93,6 @@ public class PlayAudio extends AppCompatActivity {
         {
             Picasso.get().load(image).into(songImage);
         }//end of if
-
-
-
-//        // Set up queue list (RecyclerView)
-//        setupQueueList();
 
 
 
@@ -156,9 +163,47 @@ public class PlayAudio extends AppCompatActivity {
 
         //start the song from url
         initializePlayer(audioUrl);
+
+        //pass audio url to background service to play audio in background as well
+        Intent serviceIntent = new Intent(PlayAudio.this, BackgroundPlayService.class);
+        serviceIntent.setAction("ACTION_PLAY");   //set action string to pass
+        serviceIntent.putExtra("audioUrl", audioUrl);   //set url string to pass
+        startService(serviceIntent);
+
+        String api_key = BuildConfig.API_KEY;
+
+
+        //create object of youtube to make http request and pass the api key
+        youTube = new YouTube.Builder(
+                new com.google.api.client.http.javanet.NetHttpTransport(),
+                new com.google.api.client.json.jackson2.JacksonFactory(),
+                new HttpRequestInitializer() {
+                    @Override
+                    public void initialize(com.google.api.client.http.HttpRequest request) throws IOException {
+                    }
+                }
+        ).setYouTubeRequestInitializer(new YouTubeRequestInitializer(api_key))
+                .setApplicationName(getString(R.string.app_name)).build();
+
+//        fetchRelatedVideos(videoId);
     }//end of onCreate method
 
 
+//    private void fetchRelatedVideos(String videoId) {
+//        new FetchRelatedSongs(youTube, videoId, new FetchRelatedSongs.FetchRelatedVideosCallback() {
+//            @Override
+//            public void onFetchRelatedVideos(List<RelatedSongsModel> relatedSongs) {
+//                // Set up the RecyclerView with the related songs
+//                relatedSongsList.setLayoutManager(new LinearLayoutManager(PlayAudio.this, RecyclerView.VERTICAL, false));
+//                relatedSongAdapter = new RelatedSongAdapter(relatedSongs);
+//                relatedSongsList.setAdapter(relatedSongAdapter);
+//                relatedSongsList.setVisibility(View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onError(String error) {}
+//        });
+//    }
 
     //set the exo player to play song from url
     private void initializePlayer(String audioUrl)
@@ -233,18 +278,6 @@ public class PlayAudio extends AppCompatActivity {
         return String.format("%d:%02d", minutes, seconds);
     }//end of method
 
-
-
-//    //to show next upcoming songs in list
-//    private void setupQueueList()
-//    {
-//        List<String> songs = new ArrayList<>();
-//        songs.add("Next Song 1");
-//        songs.add("Next Song 2");
-//        songs.add("Next Song 3");
-//
-//        queueList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-//    }//end of method
 
 
     //when user stops the song or close the activity then release the player

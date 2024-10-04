@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
                 Intent i = new Intent(MainActivity.this, PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
+                i.putExtra("videoId", youtubeModel.getVideoId());
                 getAudioFileUrl(youtubeModel.getVideoUrl(), i);
             }
         });
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
                 Intent i = new Intent(MainActivity.this, PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
+                i.putExtra("videoId", youtubeModel.getVideoId());
                 getAudioFileUrl(youtubeModel.getVideoUrl(), i);
             }
         });
@@ -213,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
     //show error
     public void onError(String error)
     {
-        Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
     }//end of method
 
     //when app closed, fetching should be stopped

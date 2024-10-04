@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
     android:background="@drawable/list_item_bg"
     android:layout_marginVertical="2dp">
@@ -10,30 +11,54 @@
         android:id="@+id/videoImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="25dp"
-        android:src="@color/black"/>
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:src="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/audio_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
         android:text="Audio_Title"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         android:maxLines="1"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        app:layout_constraintTop_toTopOf="@id/videoImage"
+        app:layout_constraintStart_toEndOf="@id/videoImage"
+        app:layout_constraintEnd_toStartOf="@id/optionButton"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/audio_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_below="@id/audio_title"
-        android:layout_marginTop="5dp"
         android:text="Audio_Duration"
         android:textColor="@color/white"
         android:textSize="12sp"
-        android:textStyle="bold" />
-</RelativeLayout>
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/audio_title"
+        app:layout_constraintStart_toStartOf="@id/audio_title"
+        app:layout_constraintBottom_toBottomOf="@id/videoImage"
+        android:layout_marginTop="4dp" />
+
+    <ImageView
+        android:id="@+id/optionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_more_vert_24"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="16dp"
+        tools:ignore="ContentDescription" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

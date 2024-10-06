@@ -1,9 +1,7 @@
 package com.example.audio_player.Adapter;
 
-
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,58 +13,53 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.chaquo.python.PyObject;
-import com.chaquo.python.Python;
 import com.example.audio_player.Activity.PlayAudio;
 import com.example.audio_player.Fragment.SongDetailsFragment;
-import com.example.audio_player.Model.YoutubeModel;
+import com.example.audio_player.Model.SongHistoryModel;
 import com.example.audio_player.R;
 import com.example.audio_player.Utils.AudioExtractor;
 import com.squareup.picasso.Picasso;
 
-import java.net.PortUnreachableException;
 import java.util.List;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
+public class RecentSongsListAdapter extends RecyclerView.Adapter<RecentSongsListAdapter.ViewHolder> {
 
     private final Context context;
     private final ClickEvent onItemClickListener;
-    private final List<YoutubeModel> youtubeModels;
+    private final List<SongHistoryModel> songHistoryModels;
 
-    public ListAdapter(Context context, List<YoutubeModel> youtubeModels, ClickEvent onItemClickListener) {
+    public RecentSongsListAdapter(Context context, List<SongHistoryModel> songHistoryModels, ClickEvent onItemClickListener) {
         this.context = context;
-        this.youtubeModels = youtubeModels;
+        this.songHistoryModels = songHistoryModels;
         this.onItemClickListener = onItemClickListener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.raw_list, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.raw_recent_list, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position)
     {
-        YoutubeModel youtubeModel = youtubeModels.get(position);
-        holder.audioTitle.setText(youtubeModel.getVideoTitle());
-        holder.audioDuration.setText(youtubeModel.getDuration());
-        Picasso.get().load(youtubeModel.getVideoImageUrl()).into(holder.audioImage);
+        SongHistoryModel songHistoryModel = songHistoryModels.get(position);
+        holder.audioTitle.setText(songHistoryModel.getSongTitle());
+        holder.audioDuration.setText(songHistoryModel.getSongDuration());
+        Picasso.get().load(songHistoryModel.getSongImageUrl()).into(holder.audioImage);
 
-        //set onClick event for playing that song
-        holder.itemView.setOnClickListener(new View.OnClickListener()
-        {
+
+        //pass the onClick event to main activity for playing that song
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                onItemClickListener.onItemClick(youtubeModel);
+            public void onClick(View v)
+            {
+                onItemClickListener.onItemClick(songHistoryModel);
             }
         });
 
-        //set onClick event for the options menu
-        holder.menuButton.setOnClickListener(new View.OnClickListener()
-        {
+        holder.menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -74,9 +67,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 SongDetailsFragment bottomSheet = SongDetailsFragment.newInstance();
 
                 Bundle args = new Bundle();
-                args.putString("videoTitle", youtubeModel.getVideoTitle());
-                args.putString("duration", youtubeModel.getDuration());
-                args.putString("imageUrl", youtubeModel.getVideoImageUrl());
+                args.putString("videoTitle", songHistoryModel.getSongTitle());
+                args.putString("duration", songHistoryModel.getSongDuration());
+                args.putString("imageUrl", songHistoryModel.getSongImageUrl());
                 bottomSheet.setArguments(args);
 
                 bottomSheet.setSongOptionsListener(new SongDetailsFragment.SongOptionsListener() {
@@ -85,11 +78,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                         holder.progressBar.setVisibility(View.VISIBLE);
 
                         Intent i = new Intent(context, PlayAudio.class);
-                        i.putExtra("title", youtubeModel.getVideoTitle());
-                        i.putExtra("image", youtubeModel.getVideoImageUrl());
+                        i.putExtra("title", songHistoryModel.getSongTitle());
+                        i.putExtra("image", songHistoryModel.getSongImageUrl());
 
                         AudioExtractor audioExtractor = new AudioExtractor(context);
-                        audioExtractor.getAudioFileUrl(youtubeModel.getVideoUrl(), i, holder.progressBar);
+                        audioExtractor.getAudioFileUrl(songHistoryModel.getVideoUrl(), i, holder.progressBar);
                     }
 
                     @Override
@@ -113,7 +106,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return youtubeModels.size();
+        return songHistoryModels.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -132,6 +125,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
     public interface ClickEvent {
-        void onItemClick(YoutubeModel youtubeModel);
+        void onItemClick(SongHistoryModel songHistoryModel);
     }
 }

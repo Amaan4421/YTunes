@@ -2,36 +2,40 @@ package com.example.audio_player.Activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 import com.example.audio_player.Adapter.HindiListAdapter;
 import com.example.audio_player.Adapter.ListAdapter;
+import com.example.audio_player.Adapter.RecentSongsListAdapter;
 import com.example.audio_player.BuildConfig;
+import com.example.audio_player.Model.SongHistoryModel;
 import com.example.audio_player.Model.YoutubeModel;
 import com.example.audio_player.R;
 import com.example.audio_player.Utils.AudioExtractor;
 import com.example.audio_player.Utils.FetchTrendingMusic;
+import com.example.audio_player.Utils.HistoryDatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FetchTrendingMusic.FetchTrendingMusicCallback
@@ -42,7 +46,9 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
     private YouTube youTube;
     private ProgressBar progressBar;
     private List<YoutubeModel> hindiSongs;
+    private List<SongHistoryModel> recentSongs;
     private HindiListAdapter hindiListAdapter;
+    private RecentSongsListAdapter recentSongsListAdapter;
     BottomNavigationView bottomNavigationView;
     ImageButton searchButton;
 
@@ -60,9 +66,6 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
         {
             Python.start(new AndroidPlatform(this ));
         }
-
-        //get instance of python first
-        Python py = Python.getInstance();
 
         //get ids from xml file
         progressBar = findViewById(R.id.showLoading);
@@ -96,11 +99,22 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
                 Intent i = new Intent(MainActivity.this, PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
-                i.putExtra("videoId", youtubeModel.getVideoId());
+
 
                 //call audio extracting class to get audio url to play song
                 AudioExtractor audioExtractor = new AudioExtractor(MainActivity.this);
                 audioExtractor.getAudioFileUrl(youtubeModel.getVideoUrl(), i, progressBar);
+
+
+                //add that song into history
+                HistoryDatabaseHelper db = new HistoryDatabaseHelper(MainActivity.this);
+                SongHistoryModel songHistory = new SongHistoryModel();
+                songHistory.setSongTitle(youtubeModel.getVideoTitle());
+                songHistory.setSongImageUrl(youtubeModel.getVideoImageUrl());
+                songHistory.setSongVideoId(youtubeModel.getVideoId());
+                songHistory.setSongDuration(youtubeModel.getDuration());
+                songHistory.setVideoUrl(youtubeModel.getVideoUrl());
+                db.addSongToHistory(songHistory);
             }
         });
         searchListView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -118,11 +132,21 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
                 Intent i = new Intent(MainActivity.this, PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
-                i.putExtra("videoId", youtubeModel.getVideoId());
 
                 //call audio extracting class to get audio url to play song
                 AudioExtractor audioExtractor = new AudioExtractor(MainActivity.this);
                 audioExtractor.getAudioFileUrl(youtubeModel.getVideoUrl(), i, progressBar);
+
+
+                //add that song into history
+                HistoryDatabaseHelper db = new HistoryDatabaseHelper(MainActivity.this);
+                SongHistoryModel songHistory = new SongHistoryModel();
+                songHistory.setSongTitle(youtubeModel.getVideoTitle());
+                songHistory.setSongImageUrl(youtubeModel.getVideoImageUrl());
+                songHistory.setSongVideoId(youtubeModel.getVideoId());
+                songHistory.setSongDuration(youtubeModel.getDuration());
+                songHistory.setVideoUrl(youtubeModel.getVideoUrl());
+                db.addSongToHistory(songHistory);
             }
         });
 
@@ -131,7 +155,8 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
         hindiListView.setAdapter(hindiListAdapter);          //end of hindi songs adapter method
 
 
-
+        //show recently played songs
+        loadRecentSongs();
 
         //get the api key from gradle file
         String api_key = BuildConfig.API_KEY;
@@ -227,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
     //show error
     public void onError(String error)
     {
-//        Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
     }//end of method
 
     //when app closed, fetching should be stopped
@@ -236,6 +260,51 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
         super.onDestroy();
         FetchTrendingMusic fetchTrendingMusic = new FetchTrendingMusic(youTube, this);
         fetchTrendingMusic.stopFetchingTrendingMusic();
+    }//end of method
+
+
+
+
+    //get the data from database and show by using adapter
+    @SuppressLint("NotifyDataSetChanged")
+    private void loadRecentSongs()
+    {
+        //call helper class
+        HistoryDatabaseHelper db = new HistoryDatabaseHelper(this);
+        recentSongs = db.getSongHistory();
+
+        Collections.reverse(recentSongs);
+
+        TextView recentTitle = findViewById(R.id.tv_recent);
+        RecyclerView recentSongsListView = findViewById(R.id.recentRecyclerView);
+
+        //if data found in database
+        if (recentSongs.isEmpty())
+        {
+            recentTitle.setVisibility(View.GONE);
+            recentSongsListView.setVisibility(View.GONE);
+        }//end of if
+        else
+        {
+            recentSongsListAdapter = new RecentSongsListAdapter(this, recentSongs, new RecentSongsListAdapter.ClickEvent() {
+                @Override
+                public void onItemClick(SongHistoryModel songHistoryModel)
+                {
+                    Intent i = new Intent(MainActivity.this, PlayAudio.class);
+                    i.putExtra("title", songHistoryModel.getSongTitle());
+                    i.putExtra("image", songHistoryModel.getSongImageUrl());
+
+                    //call extract audio class for url
+                    AudioExtractor audioExtractor = new AudioExtractor(MainActivity.this);
+                    audioExtractor.getAudioFileUrl(songHistoryModel.getVideoUrl(), i, progressBar);
+                }//end of on item click
+            });
+
+            //set the recycler view for showing recently played songs
+            recentSongsListView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+            recentSongsListView.setAdapter(recentSongsListAdapter);
+            recentSongsListAdapter.notifyDataSetChanged();
+        }//end of else
     }//end of method
 }//end of class
 

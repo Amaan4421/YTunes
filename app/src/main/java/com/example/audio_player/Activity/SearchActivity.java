@@ -23,7 +23,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        //Load the SearchSongFragment first where user can search songs
+        //load the SearchSongFragment first where user can search songs
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame, new SearchSongFragment())
@@ -75,7 +75,7 @@ public class SearchActivity extends AppCompatActivity {
         //call fragment class
         SearchResultFragment searchResultFragment = SearchResultFragment.newInstance(query);
 
-        //Replace SearchSongFragment with SearchResultFragment
+        //replace SearchSongFragment with SearchResultFragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, searchResultFragment);
         transaction.addToBackStack(null);

@@ -65,7 +65,6 @@ public class PlayAudio extends AppCompatActivity {
         String audioUrl = intent.getStringExtra("audioUrl");
         String title = intent.getStringExtra("title");
         String image = intent.getStringExtra("image");
-        String videoId = intent.getStringExtra("videoId");
 
 
         //get variable reference from xml file

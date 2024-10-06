@@ -29,22 +29,26 @@ public class AudioExtractor {
         private Intent intent;
         private ProgressBar progressBar;
 
-        public ExtractAudioTask(Intent intent, ProgressBar progressBar) {
+        public ExtractAudioTask(Intent intent, ProgressBar progressBar)
+        {
             this.intent = intent;
             this.progressBar = progressBar;
         }
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             //show progress bar before starting the background task
             progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
-        protected String doInBackground(String... urls) {
+        protected String doInBackground(String... urls)
+        {
             String videoUrl = urls[0];
 
             //call Python script to extract the audio URL
+            //python is already started so now call it's instance
             Python py = Python.getInstance();
             PyObject pyObject = py.getModule("extract_audio");
             PyObject result = pyObject.callAttr("extract_audio", videoUrl);
@@ -53,7 +57,8 @@ public class AudioExtractor {
         }
 
         @Override
-        protected void onPostExecute(String audioUrl) {
+        protected void onPostExecute(String audioUrl)
+        {
             //hide progress bar after task completion
             progressBar.setVisibility(View.GONE);
 

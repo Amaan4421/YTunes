@@ -66,7 +66,7 @@ public class LibraryActivity extends AppCompatActivity {
         });//end of on click method
     }
 
-    // Method to load the fragment
+    //method to load the fragment
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, fragment);  // 'frame' is the id of FrameLayout in the activity_main.xml

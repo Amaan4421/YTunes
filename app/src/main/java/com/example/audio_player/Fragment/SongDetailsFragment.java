@@ -50,7 +50,7 @@ public class SongDetailsFragment extends BottomSheetDialogFragment {
         songDuration.setText(duration);
         Picasso.get().load(imageUrl).into(songImage);
 
-        // Set click listeners for the options
+        //set click listeners for the options
         playNow.setOnClickListener(v -> {
             if (optionsListener != null) {
                 optionsListener.onPlayNowClicked();

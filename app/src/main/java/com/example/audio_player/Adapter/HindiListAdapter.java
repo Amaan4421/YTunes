@@ -62,8 +62,9 @@ public class HindiListAdapter extends RecyclerView.Adapter<HindiListAdapter.View
 
         holder.menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // Show the bottom sheet with options
+            public void onClick(View v)
+            {
+                //show the bottom sheet with options
                 SongDetailsFragment bottomSheet = SongDetailsFragment.newInstance();
 
                 Bundle args = new Bundle();
@@ -80,7 +81,6 @@ public class HindiListAdapter extends RecyclerView.Adapter<HindiListAdapter.View
                         Intent i = new Intent(context, PlayAudio.class);
                         i.putExtra("title", youtubeModel.getVideoTitle());
                         i.putExtra("image", youtubeModel.getVideoImageUrl());
-                        i.putExtra("videoId", youtubeModel.getVideoId());
 
                         AudioExtractor audioExtractor = new AudioExtractor(context);
                         audioExtractor.getAudioFileUrl(youtubeModel.getVideoUrl(), i, holder.progressBar);
@@ -99,7 +99,7 @@ public class HindiListAdapter extends RecyclerView.Adapter<HindiListAdapter.View
                     }
                 });
 
-                // Show the bottom sheet dialog
+                //show the bottom sheet dialog
                 bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), "SongOptionsBottomSheet");
             }
         });

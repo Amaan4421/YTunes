@@ -61,8 +61,7 @@ public class BackgroundPlayService extends MediaSessionService
             @Override
             public CharSequence getCurrentContentTitle(Player player)
             {
-                // Return current media title here
-                return "Playing Audio";
+                return "YTunes";
             }//end of method
 
 

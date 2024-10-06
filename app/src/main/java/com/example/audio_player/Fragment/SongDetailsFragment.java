@@ -41,10 +41,10 @@ public class SongDetailsFragment extends BottomSheetDialogFragment {
         TextView songTitle = view.findViewById(R.id.audio_title);
         TextView songDuration = view.findViewById(R.id.audio_duration);
         ImageView songImage = view.findViewById(R.id.songImage);
-
         TextView playNow = view.findViewById(R.id.play_now);
         TextView playNext = view.findViewById(R.id.play_next);
         TextView addToPlaylist = view.findViewById(R.id.add_to_playlist);
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView addToFavourites = view.findViewById(R.id.add_to_favourites);
 
         songTitle.setText(videoTitle);
         songDuration.setText(duration);
@@ -72,6 +72,12 @@ public class SongDetailsFragment extends BottomSheetDialogFragment {
             dismiss();
         });
 
+        addToFavourites.setOnClickListener(v -> {
+            if(optionsListener != null){
+                optionsListener.onAddToFavouritesClicked();
+            }
+        });
+
         return view;
     }
 
@@ -79,5 +85,6 @@ public class SongDetailsFragment extends BottomSheetDialogFragment {
         void onPlayNowClicked();
         void onPlayNextClicked();
         void onAddToPlaylistClicked();
+        void onAddToFavouritesClicked();
     }
 }

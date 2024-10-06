@@ -1,23 +1,31 @@
 package com.example.audio_player.Adapter;
 
+
 import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+import com.example.audio_player.Activity.PlayAudio;
 import com.example.audio_player.Fragment.SongDetailsFragment;
 import com.example.audio_player.Model.YoutubeModel;
 import com.example.audio_player.R;
+import com.example.audio_player.Utils.AudioExtractor;
 import com.squareup.picasso.Picasso;
 
+import java.net.PortUnreachableException;
 import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
@@ -71,17 +79,27 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 bottomSheet.setSongOptionsListener(new SongDetailsFragment.SongOptionsListener() {
                     @Override
                     public void onPlayNowClicked() {
-                        // Handle "Play Now" action
+                        holder.progressBar.setVisibility(View.VISIBLE);
+
+                        Intent i = new Intent(context, PlayAudio.class);
+                        i.putExtra("title", youtubeModel.getVideoTitle());
+                        i.putExtra("image", youtubeModel.getVideoImageUrl());
+                        i.putExtra("videoId", youtubeModel.getVideoId());
+
+                        AudioExtractor audioExtractor = new AudioExtractor(context);
+                        audioExtractor.getAudioFileUrl(youtubeModel.getVideoUrl(), i, holder.progressBar);
                     }
 
                     @Override
                     public void onPlayNextClicked() {
-                        // Handle "Play Next" action
                     }
 
                     @Override
                     public void onAddToPlaylistClicked() {
-                        // Handle "Add to Playlist" action
+                    }
+
+                    @Override
+                    public void onAddToFavouritesClicked() {
                     }
                 });
 
@@ -99,6 +117,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView audioTitle, audioDuration;
         ImageView audioImage, menuButton;
+        ProgressBar progressBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,6 +125,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             audioDuration = itemView.findViewById(R.id.audio_duration);
             audioImage = itemView.findViewById(R.id.videoImage);
             menuButton = itemView.findViewById(R.id.optionButton);
+            progressBar = itemView.findViewById(R.id.showLoading);
         }
     }
 

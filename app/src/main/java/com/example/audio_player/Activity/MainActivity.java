@@ -23,6 +23,7 @@ import com.example.audio_player.Adapter.ListAdapter;
 import com.example.audio_player.BuildConfig;
 import com.example.audio_player.Model.YoutubeModel;
 import com.example.audio_player.R;
+import com.example.audio_player.Utils.AudioExtractor;
 import com.example.audio_player.Utils.FetchTrendingMusic;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -92,13 +93,14 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
             @Override
             public void onItemClick(YoutubeModel youtubeModel)
             {
-                progressBar.setVisibility(View.VISIBLE);
-
                 Intent i = new Intent(MainActivity.this, PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
                 i.putExtra("videoId", youtubeModel.getVideoId());
-                getAudioFileUrl(youtubeModel.getVideoUrl(), i);
+
+                //call audio extracting class to get audio url to play song
+                AudioExtractor audioExtractor = new AudioExtractor(MainActivity.this);
+                audioExtractor.getAudioFileUrl(youtubeModel.getVideoUrl(), i, progressBar);
             }
         });
         searchListView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -112,13 +114,15 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
             @Override
             public void onItemClick(YoutubeModel youtubeModel)
             {
-                progressBar.setVisibility(View.VISIBLE);
 
                 Intent i = new Intent(MainActivity.this, PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
                 i.putExtra("videoId", youtubeModel.getVideoId());
-                getAudioFileUrl(youtubeModel.getVideoUrl(), i);
+
+                //call audio extracting class to get audio url to play song
+                AudioExtractor audioExtractor = new AudioExtractor(MainActivity.this);
+                audioExtractor.getAudioFileUrl(youtubeModel.getVideoUrl(), i, progressBar);
             }
         });
 
@@ -166,10 +170,11 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
                 //when user clicks home button
                 if(id == R.id.nav_home)
                 {
-                    Intent searchIntent = new Intent(MainActivity.this, MainActivity.class);
-                    startActivity(searchIntent);
+                    finish();
+                    startActivity(getIntent());
                     return true;
                 }//end of if
+
                 //when user clicks search button
                 else if(id == R.id.nav_search)
                 {
@@ -177,10 +182,17 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
                     startActivity(searchIntent);
                     return true;
                 }//end of else if
+
+                //when user clicks library button
+                else if (id == R.id.nav_library)
+                {
+                    Intent searchIntent = new Intent(MainActivity.this, LibraryActivity.class);
+                    startActivity(searchIntent);
+                    return true;
+                }
                 return true;
             }//end of on click navigation
         });//end of on click method
-
 
     }//end of onCreate method
 
@@ -224,63 +236,6 @@ public class MainActivity extends AppCompatActivity implements FetchTrendingMusi
         super.onDestroy();
         FetchTrendingMusic fetchTrendingMusic = new FetchTrendingMusic(youTube, this);
         fetchTrendingMusic.stopFetchingTrendingMusic();
-    }
-
-
-//fetching music methods to show songs on home screen........methods ends here
-
-
-
-    //To play song from list, need audio extracted url from video url
-    private void getAudioFileUrl(String videoUrl, Intent i)
-    {
-
-        //run this method async to avoid app crashing
-        new ExtractAudioTask(i).execute(videoUrl);
-
-    }//end of method
-
-
-
-    //async method to extract audio from video in background
-    private class ExtractAudioTask extends AsyncTask<String, Void, String>
-    {
-
-        //constructor to declare intent
-        private Intent i;
-        public ExtractAudioTask(Intent i) {
-            this.i = i;
-        }
-
-
-        //this method will download the audio file by using python script
-        @Override
-        protected String doInBackground(String... urls)
-        {
-            //get the url from model
-            String videoUrl = urls[0];
-
-
-            //calling python function with it's object to extract audio
-            Python py = Python.getInstance();
-            PyObject pyObject = py.getModule("extract_audio");
-
-            //now again calling the function to get the audio file url
-            PyObject result = pyObject.callAttr("extract_audio", videoUrl);
-            return result.toString();
-        }//end of method async
-
-
-
-        //after downloading file, main page navigate to play audio page where user can listen music
-        @Override
-        protected void onPostExecute(String audioUrl)
-        {
-            progressBar.setVisibility(View.GONE);
-
-            i.putExtra("audioUrl", audioUrl);
-            startActivity(i);
-        }//end of method async
     }//end of method
 }//end of class
 

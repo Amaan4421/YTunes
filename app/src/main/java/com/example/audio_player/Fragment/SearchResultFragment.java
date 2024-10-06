@@ -25,6 +25,7 @@ import com.example.audio_player.Adapter.ListAdapter;
 import com.example.audio_player.BuildConfig;
 import com.example.audio_player.Model.YoutubeModel;
 import com.example.audio_player.R;
+import com.example.audio_player.Utils.AudioExtractor;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
@@ -102,7 +103,9 @@ public class SearchResultFragment extends Fragment
                 Intent i = new Intent(getContext(), PlayAudio.class);
                 i.putExtra("title", youtubeModel.getVideoTitle());
                 i.putExtra("image", youtubeModel.getVideoImageUrl());
-                getAudioFileUrl(youtubeModel.getVideoUrl(), i);
+
+                AudioExtractor audioExtractor = new AudioExtractor(getContext());
+                audioExtractor.getAudioFileUrl(youtubeModel.getVideoUrl(), i, progressBar);
             }
         });//end of onClick method
         searchResultList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -365,70 +368,4 @@ public class SearchResultFragment extends Fragment
         //return the new formatted duration
         return formattedAudioDuration;
     }//end of format audio method
-
-
-
-
-    //to play audio file from list
-    private void getAudioFileUrl(String videoUrl, Intent i)
-    {
-
-        //run this method async to avoid app crashing
-        new ExtractAudioTask(i).execute(videoUrl);
-
-    }//end of method
-
-
-
-    //async method to extract audio from video in background
-    private class ExtractAudioTask extends AsyncTask<String, Void, String>
-    {
-
-        //constructor to declare intent
-        private Intent i;
-        public ExtractAudioTask(Intent i) {
-            this.i = i;
-        }
-
-        //when user clicks the list item it will show loading bar
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-
-            //change the visibility of loading bar
-            progressBar.setVisibility(View.VISIBLE);
-        }//end of method async
-
-
-
-        //this method will download the audio file by using python script
-        @Override
-        protected String doInBackground(String... urls)
-        {
-            //get the url from model
-            String videoUrl = urls[0];
-
-
-            //calling python function with it's object to extract audio
-            Python py = Python.getInstance();
-            PyObject pyObject = py.getModule("extract_audio");
-
-            //now again calling the function to get the audio file url
-            PyObject result = pyObject.callAttr("extract_audio", videoUrl);
-            return result.toString();
-        }//end of method async
-
-
-
-        //after downloading file, main page navigate to play audio page where user can listen music
-        @Override
-        protected void onPostExecute(String audioUrl)
-        {
-            //change the visibility of loading bar again
-            progressBar.setVisibility(View.GONE);
-
-            i.putExtra("audioUrl", audioUrl);
-            startActivity(i);
-        }//end of method async
-    }//end of method
 }//end of class

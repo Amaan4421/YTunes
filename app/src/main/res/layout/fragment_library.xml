@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/toolbar_bg"
+        android:layout_margin="2dp">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Library"
+            android:textSize="20dp"
+            android:textColor="@color/pink_100"
+            android:layout_marginStart="30dp"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="90dp"
+        android:padding="16dp"
+        app:rowCount="2"
+        app:columnCount="2">
+
+        <android.widget.Button
+            android:id="@+id/history"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_margin="8dp"
+            android:text="History"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:background="@drawable/toolbar_bg"
+            android:gravity="center"
+            android:drawableTop="@drawable/baseline_history_24"
+            android:drawableTint="@color/pink"
+            android:padding="16dp"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill"
+            app:layout_rowWeight="1"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:drawablePadding="8dp"/>
+
+        <android.widget.Button
+            android:id="@+id/playlist"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_margin="8dp"
+            android:text="Playlist"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:background="@drawable/toolbar_bg"
+            android:gravity="center"
+            android:drawableTop="@drawable/baseline_playlist_play_24"
+            android:drawableTint="@color/pink"
+            android:padding="16dp"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1"
+            app:layout_gravity="fill"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:drawablePadding="8dp"/>
+
+        <android.widget.Button
+            android:id="@+id/favorites"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_margin="8dp"
+            android:text="Favorites"
+            android:textAllCaps="false"
+            android:background="@drawable/toolbar_bg"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:drawableTop="@drawable/baseline_favorite_24"
+            android:drawableTint="@color/pink"
+            android:padding="16dp"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1"
+            app:layout_gravity="fill"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:drawablePadding="8dp"/>
+
+        <android.widget.Button
+            android:id="@+id/settings"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:text="Settings"
+            android:textAllCaps="false"
+            android:background="@drawable/toolbar_bg"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:drawableTop="@drawable/baseline_settings_24"
+            android:drawableTint="@color/pink"
+            android:padding="16dp"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill"
+            app:layout_rowWeight="1"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:drawablePadding="8dp"/>
+    </androidx.gridlayout.widget.GridLayout>
+</FrameLayout>
